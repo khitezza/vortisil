@@ -1,6 +1,6 @@
-![Vortisil](https://raw.githubusercontent.com/khitezza/vortisil/trunk/images/banner.png)
+![Vortisil](https://raw.githubusercontent.com/thnhan1/vortisil/trunk/images/banner.png)
 
-<h4 align=center><a href="https://khitezza.com" rel="nofollow">[ Demo Site ]</a></h4>
+<h4 align=center><a href="https://thnhan1.github.io" rel="nofollow">[ Demo Site ]</a></h4>
 
 ## Features
 
@@ -25,7 +25,7 @@ git init
 Add theme by git submodule:
 
 ```bash
-git submodule add https://github.com/khitezza/vortisil themes/vortisil
+git submodule add https://github.com/thnhan1/vortisil themes/vortisil
 ```
 
 And updated Theme:
@@ -188,6 +188,8 @@ Use `data/works.toml` to display works/projects on the homepage.
 ### Copy Code Block
 
 Add custom css, js, html for layout. Because this using core feature of vortisil theme, so that you should add custom file, not change default theme.
+
+![Vortisil](https://raw.githubusercontent.com/thnhan1/vortisil/trunk/images/copy_code.png)
 
 1. `layouts/partials/header.html`
 
