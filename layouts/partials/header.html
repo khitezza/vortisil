@@ -1,32 +1,43 @@
 <header>
-    <nav class="navbar">
-        <div class="navbar-top" id="top">
-            <div class="navbar-logo">
-                <a href="{{ .Site.BaseURL }}" class="logo-text" style="font-family: jicaleta;">
-                    {{ if .Site.Params.logoImg }}
-                    {{ $brand := resources.Get "/assets/imgs/logo.png" }}
-                    <img src="{{ $brand.RelPermalink }}" alt="Logo Image" class="logo-image {{ if .Site.Params.logoInvert }}logo-invert{{ end }}" loading="lazy">
-                    {{ else }}
-                    {{ .Site.Title }}
-                    {{ end }}
-                </a>
-            </div>
-            <div class="navbar-burger" id="navbar-burger">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-        </div>
-        <div class="navbar-menu" id="navbar-menu">
-            <div class="navbar-link-list">
-                {{ range .Site.Menus.main }}
-                <a href="{{ .URL }}" class="navbar-link-item">{{ index $.Site.Data.l10n .Identifier }}</a>
-                {{ end }}
-                <a href="/search" class="navbar-link-item">{{ index $.Site.Data.l10n "search" }}</a>
-            </div>
-            <div class="theme-toggle">
-                <div id="theme-toggle-btn">陰</div>
-            </div>
-        </div>
-    </nav>
+	<nav class="navbar">
+		<div class="navbar-top" id="top">
+			<div class="navbar-logo">
+				<a
+					href="{{ .Site.BaseURL }}"
+					class="logo-text"
+					style="font-family: jicaleta"
+				>
+					{{ if .Site.Params.logoImg }} {{ $brand := resources.Get
+					"/assets/imgs/logo.png" }}
+					<img
+						src="{{ $brand.RelPermalink }}"
+						alt="Logo Image"
+						class="logo-image {{ if .Site.Params.logoInvert }}logo-invert{{ end }}"
+						loading="lazy"
+					/>
+					{{ else }} {{ .Site.Title }} {{ end }}
+				</a>
+			</div>
+			<div class="navbar-burger" id="navbar-burger">
+				<span></span>
+				<span></span>
+				<span></span>
+			</div>
+		</div>
+		<div class="navbar-menu" id="navbar-menu">
+			<div class="navbar-link-list">
+				{{ range .Site.Menus.main }}
+				<a href="{{ .URL }}" class="navbar-link-item"
+					>{{ index $.Site.Data.l10n .Identifier }}</a
+				>
+				{{ end }}
+				<a href="/search" class="navbar-link-item"
+					>{{ index $.Site.Data.l10n "search" }}</a
+				>
+			</div>
+			<div class="theme-toggle">
+				<div id="theme-toggle-btn">🌕</div>
+			</div>
+		</div>
+	</nav>
 </header>

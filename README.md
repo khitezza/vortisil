@@ -8,14 +8,13 @@
 - All articles search
 - Responsive design
 - Rendering mathematical formulas with MathJax.js
+- [New] Custom Script Copy Code Block
 
 ## Quick Start
 
 Before start, make sure [Git](https://git-scm.com/) and [Hugo](https://gohugo.io/) are installed.
 
-
-
-Create and enter ```Website``` folder and run the ```git init``` command:
+Create and enter `Website` folder and run the `git init` command:
 
 ```bash
 git init
@@ -37,7 +36,7 @@ git submodule update --remote --merge
 
 ### Content Management
 
-Add a new common article:
+Add a new common article [required `hugo.toml` config]:
 
 ```bash
 hugo new content posts/20xx-xx-xx-Titile.md
@@ -68,14 +67,14 @@ draft = false
 
 ## Custom
 
-Site config ```hugo.toml```:
+Site config `hugo.toml`:
 
 ```toml
 baseURL = "https://example.com"
 languageCode = "en" # <html lang> ==> data/l10n.toml
 title = "Example Site" # Website Title
 copyright = "Name" # Footer copyright.
-#theme = "vortisil"
+theme = "vortisil" # use vortisil theme
 pagination.pagerSize = 9
 hasCJKLanguage = true
 enableEmoji = true
@@ -89,7 +88,7 @@ disableKinds = ["taxonomy","term"] # DO NOT MODIFY
 
 [params.meta]
     description = "A fast, minimal and restrained Hugo theme." # Site description
-  
+
 [[menus.main]]
     identifier = "home"
     url = "/"
@@ -110,18 +109,23 @@ disableKinds = ["taxonomy","term"] # DO NOT MODIFY
         extended = true
         min = "0.116.0"
 
+
 [markup]
     [markup.highlight]
-        style = "evergarden"
-        tabWidth = 4
+        style = "dracula"
         codeFences = true
         guessSyntax = true
+        lineNumbersInTable = true
+        tabWidth = 4
+    [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true # allow unsafe raw html
 
 [outputs]
     home = ["HTML", "JSON"]
 ```
 
-The Position of the logo,hero and favicon:
+The Position of the logo, hero and favicon:
 
 ```bash
 assets/assets/imgs/logo.png
@@ -133,19 +137,19 @@ static/assets/imgs/favicon-32x32.png
 static/assets/imgs/apple-touch-icon.png
 ```
 
-Create ```assets/assets/scss/custom.scss``` and change the primary color:
+Create `assets/assets/scss/custom.scss` and change the primary color:
 
 ```scss
 [data-theme="light"] {
-    --color-primary: #297d7a !important;
+  --color-primary: #297d7a !important;
 }
 
 [data-theme="dark"] {
-    --color-primary: #68bdae !important;
+  --color-primary: #68bdae !important;
 }
 ```
 
-After much thought, I dropped the i18n system and added ```data/l10n.toml```.
+After much thought, I dropped the i18n system and added `data/l10n.toml`.
 
 You can use a git patch or pull request to help complete the translation of l10n.toml.
 
@@ -170,7 +174,7 @@ powered_by = 'Powered by <a href="https://gohugo.io">Hugo</a> & <a href="https:/
 license = 'This article is licensed under <a href="%s" target="_blank" rel="license noopener noreferrer">__license__</a>'
 ```
 
-Use ```data/works.toml``` to display works/projects on the homepage.
+Use `data/works.toml` to display works/projects on the homepage.
 
 ```toml
 [[works]]
@@ -179,9 +183,112 @@ Use ```data/works.toml``` to display works/projects on the homepage.
   desc = "A fast, minimal, and restrained Hugo theme." # Description.
 ```
 
+## New Features:
+
+### Copy Code Block
+
+Add custom css, js, html for layout. Because this using core feature of vortisil theme, so that you should add custom file, not change default theme.
+
+1. `layouts/partials/header.html`
+
+```html
+<header>
+  <link rel="stylesheet" href="{{ "css/style.css" | relURL }}">
+<script defer src="{{ "js/copy.js" | relURL }}"></script>
+
+  <nav class="navbar">
+      <div class="navbar-top" id="top">
+          <div class="navbar-logo">
+              <a href="{{ .Site.BaseURL }}" class="logo-text" style="font-family: jicaleta;">
+                  {{ if .Site.Params.logoImg }}
+                  {{ $brand := resources.Get "/assets/imgs/logo.png" }}
+                  <img src="{{ $brand.RelPermalink }}" alt="Logo Image" class="logo-image {{ if .Site.Params.logoInvert }}logo-invert{{ end }}" loading="lazy">
+                  {{ else }}
+                  {{ .Site.Title }}
+                  {{ end }}
+              </a>
+          </div>
+          <div class="navbar-burger" id="navbar-burger">
+              <span></span>
+              <span></span>
+              <span></span>
+          </div>
+      </div>
+      <div class="navbar-menu" id="navbar-menu">
+          <div class="navbar-link-list">
+              {{ range .Site.Menus.main }}
+              <a href="{{ .URL }}" class="navbar-link-item">{{ index $.Site.Data.l10n .Identifier }}</a>
+              {{ end }}
+              <a href="/search" class="navbar-link-item">{{ index $.Site.Data.l10n "search" }}</a>
+          </div>
+          <div class="theme-toggle">
+              <div id="theme-toggle-btn">🌕</div>
+          </div>
+      </div>
+  </nav>
+</header>
+```
+
+2. `layouts/partials/footer.html`
+
+```html
+<footer class="footer">
+  <span>&copy; {{ now.Year }} {{ site.Copyright}}. {{ index $.Site.Data.l10n "all_rights_reserved" }}.</span>
+  <span>{{ index $.Site.Data.l10n "powered_by" | safeHTML }}.</span>
+  <script src="{{ "js/copy.js" | relURL }}"></script>
+
+</footer>
+```
+
+3. `static/copy.js`
+
+```js
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll("pre code").forEach((codeBlock) => {
+    let button = document.createElement("button");
+    button.className = "copy-code-button";
+    button.innerText = "Copy";
+
+    button.addEventListener("click", () => {
+      navigator.clipboard.writeText(codeBlock.innerText).then(() => {
+        button.innerText = "Copied!";
+        setTimeout(() => (button.innerText = "Copy"), 2000);
+      });
+    });
+
+    let pre = codeBlock.parentNode;
+    pre.style.position = "relative";
+    pre.appendChild(button);
+  });
+});
+```
+
+4. `static/style.js`
+
+```css
+.copy-code-button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  padding: 5px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  background: #333;
+  color: white;
+  border: none;
+  border-radius: 5px;
+}
+
+.copy-code-button:hover {
+  background: #555;
+}
+```
+
 ## Deployments
 
-Copy this to ```.github/workflows/gh-pages.yaml``` for building the Hugo website and deploying it to GitHub Pages.
+_Require_: Enable Github Page: `Repo -> Setting -> Deploys on Actions` and `Actions`: `allow read and write repository`.
+
+Copy this to `.github/workflows/gh-pages.yaml` for building the Hugo website and deploying it to GitHub Pages.
 
 ```yaml
 # Sample workflow for building and deploying a Hugo site to GitHub Pages
@@ -260,7 +367,7 @@ jobs:
         uses: actions/deploy-pages@v4
 ```
 
-If you have a domain, add ``CNAME`` and configure the domain dns settings.
+If you have a domain, add `CNAME` and configure the domain dns settings.
 
 ```bash
 echo "yourdomain.com" >> CNAME
